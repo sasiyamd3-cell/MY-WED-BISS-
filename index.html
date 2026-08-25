@@ -4,7 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Web Design Studio</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com">
+// ===== PREMIUM REVEAL ANIMATIONS =====
+const revealObserver = new IntersectionObserver((entries)=>{
+ entries.forEach(entry=>{ if(entry.isIntersecting) entry.target.classList.add('show'); });
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>revealObserver.observe(el));
+
+</script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         /* ========== GLOBAL STYLES ========== */
@@ -155,7 +162,108 @@
             .hero h1 { font-size: 2.2rem; }
             .form-row { grid-template-columns: 1fr; }
         }
-    </style>
+    
+<style>
+:root{
+  --bg:#070b17;--card:rgba(15,23,42,.72);--card2:rgba(30,41,59,.58);
+  --text:#f8fafc;--muted:#94a3b8;--line:rgba(148,163,184,.16);
+  --a:#7c3aed;--b:#06b6d4;--glow:rgba(124,58,237,.35);
+}
+*{scrollbar-width:thin;scrollbar-color:#7c3aed #070b17}
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(circle at 15% 15%,rgba(124,58,237,.16),transparent 28%),
+    radial-gradient(circle at 85% 25%,rgba(6,182,212,.12),transparent 25%),
+    #070b17!important;color:var(--text);overflow-x:hidden;
+}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.22;
+background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:42px 42px}
+#navbar{
+ background:rgba(7,11,23,.68)!important;border-bottom:1px solid var(--line);
+ box-shadow:0 10px 40px rgba(0,0,0,.22)!important
+}
+.nav-container{max-width:1280px!important;height:78px!important}
+.logo{font-size:1.55rem!important;letter-spacing:.5px}
+.nav-links{gap:1rem!important}
+.nav-links a{color:#cbd5e1!important;padding:.65rem .8rem;border-radius:12px}
+.nav-links a:hover{background:rgba(124,58,237,.12);color:#fff!important}
+.page{padding-top:105px!important}
+.container{max-width:1280px!important}
+.hero{
+ position:relative;overflow:hidden;text-align:left!important;margin:0 0 4rem!important;
+ min-height:560px;padding:5.5rem 5rem!important;border:1px solid var(--line);
+ border-radius:32px!important;
+ background:linear-gradient(135deg,rgba(124,58,237,.92),rgba(6,182,212,.48)),
+ radial-gradient(circle at 80% 20%,rgba(255,255,255,.18),transparent 30%)!important;
+ box-shadow:0 30px 100px rgba(0,0,0,.35),0 0 80px rgba(124,58,237,.15)
+}
+.hero:after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;
+right:-130px;bottom:-170px;border:1px solid rgba(255,255,255,.2);
+box-shadow:0 0 0 45px rgba(255,255,255,.03),0 0 0 90px rgba(255,255,255,.02)}
+.hero h1{font-size:clamp(2.8rem,7vw,5.8rem)!important;line-height:1.02!important;
+max-width:850px;letter-spacing:-3px}
+.hero p{font-size:1.15rem!important;max-width:680px!important;color:#e2e8f0}
+.hero .btn-primary{background:#fff!important;color:#4c1d95!important}
+.btn-primary{background:linear-gradient(135deg,#7c3aed,#06b6d4)!important;
+box-shadow:0 12px 35px rgba(124,58,237,.25)}
+.nav-btn{border-radius:14px!important}
+.features-grid{gap:1.2rem!important;margin:2rem 0 5rem!important}
+.feature-card,.order-form,.order-card{
+ background:var(--card)!important;color:var(--text)!important;
+ border:1px solid var(--line);box-shadow:0 18px 55px rgba(0,0,0,.2)!important;
+ backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)
+}
+.feature-card{padding:2rem 1.5rem!important;border-radius:22px!important}
+.feature-card:hover{transform:translateY(-10px) scale(1.01)!important;
+border-color:rgba(124,58,237,.45);box-shadow:0 25px 65px rgba(124,58,237,.16)!important}
+.feature-card i{color:#a78bfa!important}
+h1,h2,h3{letter-spacing:-.5px}
+section.premium-section{margin:5rem 0}
+.section-head{text-align:center;max-width:760px;margin:0 auto 2.5rem}
+.section-head span{color:#a78bfa;font-weight:800;text-transform:uppercase;letter-spacing:2px;font-size:.8rem}
+.section-head h2{font-size:clamp(2rem,5vw,3.4rem);margin:.5rem 0}
+.section-head p{color:var(--muted)}
+.premium-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}
+.premium-card{padding:1.6rem;border-radius:22px;background:var(--card);
+border:1px solid var(--line);transition:.3s}
+.premium-card:hover{transform:translateY(-8px);border-color:rgba(6,182,212,.4)}
+.premium-card .icon{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;
+background:linear-gradient(135deg,rgba(124,58,237,.25),rgba(6,182,212,.18));
+color:#c4b5fd;font-size:1.25rem;margin-bottom:1rem}
+.premium-card p{color:var(--muted);margin-top:.5rem}
+.price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem}
+.price-card{padding:2rem;border-radius:26px;background:var(--card);border:1px solid var(--line);position:relative}
+.price-card.featured{border-color:#8b5cf6;box-shadow:0 0 55px rgba(124,58,237,.16)}
+.price-card .tag{position:absolute;right:18px;top:18px;padding:.35rem .7rem;border-radius:99px;
+font-size:.72rem;background:#7c3aed}
+.price{font-size:2.4rem;font-weight:900;margin:1rem 0}
+.price small{font-size:.85rem;color:var(--muted);font-weight:500}
+.price-card li{list-style:none;padding:.45rem 0;color:#cbd5e1}
+.price-card li:before{content:"✓";color:#67e8f9;margin-right:.5rem}
+.portfolio-card{overflow:hidden;border-radius:24px;background:var(--card);
+border:1px solid var(--line);transition:.3s}
+.portfolio-card:hover{transform:translateY(-8px);box-shadow:0 25px 70px rgba(0,0,0,.3)}
+.portfolio-art{height:210px;display:grid;place-items:center;font-size:4rem;
+background:linear-gradient(135deg,#312e81,#0e7490)}
+.portfolio-info{padding:1.4rem}.portfolio-info p{color:var(--muted)}
+.order-form{border-radius:26px!important}
+.form-control{background:rgba(2,6,23,.65)!important;color:#fff!important;
+border-color:var(--line)!important;border-radius:14px!important}
+.admin-table th{background:rgba(124,58,237,.12)!important}
+#toast{border:1px solid var(--line)!important;backdrop-filter:blur(15px)}
+.reveal{opacity:0;transform:translateY(24px);transition:.7s ease}
+.reveal.show{opacity:1;transform:none}
+@media(max-width:768px){
+ .hero{padding:3rem 1.5rem!important;min-height:500px}
+ .hero h1{font-size:2.8rem!important;letter-spacing:-1.5px}
+ .nav-container{height:68px!important}
+ .page{padding-top:85px!important}
+}
+</style>
+
+</style>
 </head>
 <body>
 
@@ -227,11 +335,56 @@
     </div>
 </div>
 
+
+<!-- ===== PREMIUM SERVICES ===== -->
+<section class="premium-section reveal">
+ <div class="section-head"><span>What We Build</span><h2>Everything you need to grow online.</h2>
+ <p>Modern digital experiences engineered for speed, trust and conversions.</p></div>
+ <div class="premium-grid">
+  <div class="premium-card"><div class="icon"><i class="fas fa-laptop-code"></i></div><h3>Web Development</h3><p>Fast, responsive and conversion-focused websites.</p></div>
+  <div class="premium-card"><div class="icon"><i class="fas fa-cart-shopping"></i></div><h3>E-Commerce</h3><p>Beautiful online stores with scalable architecture.</p></div>
+  <div class="premium-card"><div class="icon"><i class="fas fa-robot"></i></div><h3>AI Solutions</h3><p>Smart AI experiences integrated into your workflow.</p></div>
+  <div class="premium-card"><div class="icon"><i class="fas fa-mobile-screen"></i></div><h3>UI/UX Design</h3><p>Clean interfaces designed around real users.</p></div>
+  <div class="premium-card"><div class="icon"><i class="fas fa-server"></i></div><h3>APIs & Systems</h3><p>Secure APIs and dashboards that connect your products.</p></div>
+  <div class="premium-card"><div class="icon"><i class="fas fa-chart-line"></i></div><h3>SEO & Growth</h3><p>Technical foundations that help your brand get discovered.</p></div>
+ </div>
+</section>
+
+<!-- ===== PREMIUM PRICING ===== -->
+<section class="premium-section reveal">
+ <div class="section-head"><span>Simple Pricing</span><h2>Choose the level that fits your project.</h2>
+ <p>Flexible packages with room to scale.</p></div>
+ <div class="price-grid">
+  <div class="price-card"><h3>Starter</h3><div class="price">LKR 15K <small>from</small></div>
+   <ul><li>Landing page</li><li>Responsive design</li><li>Basic SEO</li><li>Contact section</li></ul>
+   <button class="nav-btn btn-primary" onclick="navigateTo('order')">Start Project</button></div>
+  <div class="price-card featured"><div class="tag">POPULAR</div><h3>Business</h3><div class="price">LKR 35K <small>from</small></div>
+   <ul><li>Multi-page website</li><li>Premium UI/UX</li><li>Admin panel</li><li>SEO setup</li></ul>
+   <button class="nav-btn btn-primary" onclick="navigateTo('order')">Choose Business</button></div>
+  <div class="price-card"><h3>Premium</h3><div class="price">LKR 75K <small>from</small></div>
+   <ul><li>Custom web app</li><li>Advanced dashboard</li><li>API integration</li><li>Priority support</li></ul>
+   <button class="nav-btn btn-primary" onclick="navigateTo('order')">Go Premium</button></div>
+  <div class="price-card"><h3>Custom</h3><div class="price">Let's Talk</div>
+   <ul><li>Complex platforms</li><li>AI integrations</li><li>Custom APIs</li><li>Scalable architecture</li></ul>
+   <button class="nav-btn btn-outline" onclick="navigateTo('order')">Request Quote</button></div>
+ </div>
+</section>
+
+<!-- ===== STATS ===== -->
+<section class="premium-section reveal">
+ <div class="premium-grid">
+  <div class="premium-card"><h2>100%</h2><p>Responsive</p></div>
+  <div class="premium-card"><h2>24/7</h2><p>Project visibility</p></div>
+  <div class="premium-card"><h2>Fast</h2><p>Performance focused</p></div>
+  <div class="premium-card"><h2>∞</h2><p>Creative possibilities</p></div>
+ </div>
+</section>
+
 <!-- PORTFOLIO -->
 <div id="page-portfolio" class="page">
     <div class="container">
         <h1 style="font-size:2.5rem;font-weight:700;text-align:center;margin-bottom:2rem;">Our Portfolio</h1>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem;">
+        <div class="premium-grid">
             <div style="background:#fff;border-radius:1.5rem;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);">
                 <div style="height:200px;background:linear-gradient(135deg,#667eea,#764ba2);"></div>
                 <div style="padding:1.5rem;"><h3>E-commerce Website</h3><p style="opacity:0.7;">Modern online store with payment</p></div>
