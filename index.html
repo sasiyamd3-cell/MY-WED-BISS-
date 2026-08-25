@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Design Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        /* ========== GLOBAL STYLES ========== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8fafc; transition: 0.3s; }
+        body.dark { background: #0f172a; color: #e2e8f0; }
+
+        /* ========== LOADING SCREEN ========== */
+        #loading-screen {
+            position: fixed; inset: 0; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: opacity 0.8s, visibility 0.8s;
+        }
+        #loading-screen.hide { opacity: 0; visibility: hidden; }
+        .loader-ring {
+            width: 70px; height: 70px;
+            border: 6px solid rgba(255,255,255,0.2);
+            border-top: 6px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .loading-text { color: #fff; font-size: 1.5rem; margin-top: 1.5rem; animation: pulse 1.5s ease-in-out infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        /* ========== NAVBAR ========== */
+        #navbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(255,255,255,0.85); backdrop-filter: blur(12px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            transition: 0.3s;
+            padding: 0 1.5rem;
+        }
+        body.dark #navbar { background: rgba(15,23,42,0.9); }
+        .nav-container {
+            max-width: 1200px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+            height: 70px;
+        }
+        .logo { font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; cursor: pointer; }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a { text-decoration: none; color: #1e293b; font-weight: 500; transition: 0.3s; cursor: pointer; }
+        body.dark .nav-links a { color: #cbd5e1; }
+        .nav-links a:hover { color: #667eea; }
+        .nav-btn {
+            padding: 0.5rem 1.5rem; border-radius: 9999px; border: none;
+            font-weight: 600; cursor: pointer; transition: 0.3s;
+        }
+        .btn-primary { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; }
+        .btn-primary:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(102,126,234,0.4); }
+        .btn-outline { background: transparent; border: 2px solid #667eea; color: #667eea; }
+        .btn-outline:hover { background: #667eea; color: #fff; }
+        .btn-danger { background: #ef4444; color: #fff; }
+        .btn-danger:hover { background: #dc2626; }
+        .mobile-toggle { display: none; font-size: 1.5rem; cursor: pointer; background: none; border: none; }
+        body.dark .mobile-toggle { color: #fff; }
+        #mobile-menu {
+            display: none; flex-direction: column; gap: 1rem;
+            padding: 1rem 0; background: #fff; border-radius: 0 0 1rem 1rem;
+        }
+        body.dark #mobile-menu { background: #1e293b; }
+        #mobile-menu a { padding: 0.5rem 1rem; text-decoration: none; color: #1e293b; }
+        body.dark #mobile-menu a { color: #cbd5e1; }
+
+        /* ========== PAGES ========== */
+        .page {
+            display: none; padding-top: 90px; min-height: 100vh;
+            animation: fadeIn 0.5s ease;
+        }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+
+        /* ========== HOME ========== */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff; padding: 4rem 0; border-radius: 2rem;
+            text-align: center; margin-bottom: 3rem;
+        }
+        .hero h1 { font-size: 3.5rem; font-weight: 800; margin-bottom: 1rem; }
+        .hero p { font-size: 1.25rem; opacity: 0.9; max-width: 600px; margin: 0 auto 2rem; }
+        .features-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+            gap: 2rem; margin: 3rem 0;
+        }
+        .feature-card {
+            background: #fff; padding: 2rem; border-radius: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            text-align: center; transition: 0.3s; cursor: default;
+        }
+        body.dark .feature-card { background: #1e293b; }
+        .feature-card:hover { transform: translateY(-8px); box-shadow: 0 12px 40px rgba(0,0,0,0.1); }
+        .feature-card i { font-size: 3rem; color: #667eea; margin-bottom: 1rem; }
+        .feature-card h3 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+
+        /* ========== ORDER FORM ========== */
+        .order-form {
+            background: #fff; padding: 2.5rem; border-radius: 2rem;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.06);
+            max-width: 800px; margin: 0 auto;
+        }
+        body.dark .order-form { background: #1e293b; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
+        .form-control {
+            width: 100%; padding: 0.75rem 1rem; border: 2px solid #e2e8f0;
+            border-radius: 0.75rem; font-size: 1rem; transition: 0.3s;
+            background: #fff; color: #1e293b;
+        }
+        body.dark .form-control { background: #0f172a; border-color: #334155; color: #e2e8f0; }
+        .form-control:focus { border-color: #667eea; outline: none; box-shadow: 0 0 0 4px rgba(102,126,234,0.15); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+        /* ========== DASHBOARD ========== */
+        .order-card {
+            background: #fff; padding: 1.5rem; border-radius: 1.5rem;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem; transition: 0.3s;
+        }
+        body.dark .order-card { background: #1e293b; }
+        .order-card:hover { transform: translateX(6px); }
+        .status-badge {
+            padding: 0.25rem 1rem; border-radius: 9999px;
+            font-size: 0.8rem; font-weight: 600; display: inline-block;
+        }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-review { background: #dbeafe; color: #1e40af; }
+        .status-in-progress { background: #ede9fe; color: #5b21b6; }
+        .status-completed { background: #d1fae5; color: #065f46; }
+        .status-cancelled { background: #fee2e2; color: #991b1b; }
+
+        /* ========== ADMIN ========== */
+        .admin-table { width: 100%; border-collapse: collapse; }
+        .admin-table th, .admin-table td {
+            padding: 0.75rem 1rem; text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        body.dark .admin-table th, body.dark .admin-table td { border-color: #334155; }
+        .admin-table th { background: #f1f5f9; font-weight: 600; }
+        body.dark .admin-table th { background: #0f172a; }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .mobile-toggle { display: block; }
+            #mobile-menu.show { display: flex; }
+            .hero h1 { font-size: 2.2rem; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ====== LOADING SCREEN ====== -->
+<div id="loading-screen">
+    <div class="loader-ring"></div>
+    <div class="loading-text">✨ Loading Amazing Designs...</div>
+</div>
+
+<!-- ====== NAVBAR ====== -->
+<nav id="navbar">
+    <div class="nav-container">
+        <div class="logo" onclick="navigateTo('home')">✦ WebDesign</div>
+        <div class="nav-links" id="navLinks">
+            <a onclick="navigateTo('home')">Home</a>
+            <a onclick="navigateTo('portfolio')">Portfolio</a>
+            <a onclick="navigateTo('order')">Order</a>
+            <a id="dashboardLink" onclick="navigateTo('dashboard')" style="display:none;">Dashboard</a>
+            <a id="adminLink" onclick="navigateTo('admin')" style="display:none;">Admin</a>
+            <a id="authLinks">
+                <button class="nav-btn btn-outline" onclick="navigateTo('login')">Login</button>
+                <button class="nav-btn btn-primary" onclick="navigateTo('register')">Register</button>
+            </a>
+            <a id="userLinks" style="display:none;">
+                <span id="userName" style="font-weight:600;color:#667eea;"></span>
+                <button class="nav-btn btn-danger" onclick="logout()">Logout</button>
+            </a>
+        </div>
+        <button class="mobile-toggle" onclick="toggleMobileMenu()">☰</button>
+    </div>
+    <div id="mobile-menu">
+        <a onclick="navigateTo('home');toggleMobileMenu()">Home</a>
+        <a onclick="navigateTo('portfolio');toggleMobileMenu()">Portfolio</a>
+        <a onclick="navigateTo('order');toggleMobileMenu()">Order</a>
+        <a id="mDashboardLink" onclick="navigateTo('dashboard');toggleMobileMenu()" style="display:none;">Dashboard</a>
+        <a id="mAdminLink" onclick="navigateTo('admin');toggleMobileMenu()" style="display:none;">Admin</a>
+        <a id="mAuthLinks">
+            <button class="nav-btn btn-outline" onclick="navigateTo('login');toggleMobileMenu()">Login</button>
+            <button class="nav-btn btn-primary" onclick="navigateTo('register');toggleMobileMenu()">Register</button>
+        </a>
+        <a id="mUserLinks" style="display:none;">
+            <span id="mUserName" style="font-weight:600;color:#667eea;"></span>
+            <button class="nav-btn btn-danger" onclick="logout();toggleMobileMenu()">Logout</button>
+        </a>
+    </div>
+</nav>
+
+<!-- ====== PAGES ====== -->
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+    <div class="container">
+        <div class="hero">
+            <h1>Modern Web Design <br/>For Your Business</h1>
+            <p>We create stunning websites that convert visitors into customers. Custom designs, fast delivery, and happy clients.</p>
+            <button class="nav-btn btn-primary" style="font-size:1.1rem;padding:0.75rem 2.5rem;" onclick="navigateTo('order')">🚀 Start Your Project</button>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card"><i class="fas fa-palette"></i><h3>Unique Design</h3><p>Custom designs tailored to your brand</p></div>
+            <div class="feature-card"><i class="fas fa-code"></i><h3>Clean Code</h3><p>SEO optimized and lightning fast</p></div>
+            <div class="feature-card"><i class="fas fa-mobile-alt"></i><h3>Responsive</h3><p>Perfect on all devices</p></div>
+            <div class="feature-card"><i class="fas fa-rocket"></i><h3>Fast Delivery</h3><p>Get your site in record time</p></div>
+        </div>
+        <div style="text-align:center;padding:3rem 0;">
+            <h2 style="font-size:2.5rem;font-weight:700;">Ready to Get Started?</h2>
+            <p style="font-size:1.2rem;opacity:0.7;margin:1rem 0 2rem;">Let's create something amazing together</p>
+            <button class="nav-btn btn-primary" style="font-size:1.1rem;padding:0.75rem 2.5rem;" onclick="navigateTo('order')">Get a Free Quote</button>
+        </div>
+    </div>
+</div>
+
+<!-- PORTFOLIO -->
+<div id="page-portfolio" class="page">
+    <div class="container">
+        <h1 style="font-size:2.5rem;font-weight:700;text-align:center;margin-bottom:2rem;">Our Portfolio</h1>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem;">
+            <div style="background:#fff;border-radius:1.5rem;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);">
+                <div style="height:200px;background:linear-gradient(135deg,#667eea,#764ba2);"></div>
+                <div style="padding:1.5rem;"><h3>E-commerce Website</h3><p style="opacity:0.7;">Modern online store with payment</p></div>
+            </div>
+            <div style="background:#fff;border-radius:1.5rem;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);">
+                <div style="height:200px;background:linear-gradient(135deg,#f093fb,#f5576c);"></div>
+                <div style="padding:1.5rem;"><h3>Mobile App UI</h3><p style="opacity:0.7;">Fitness app with dark mode</p></div>
+            </div>
+            <div style="background:#fff;border-radius:1.5rem;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);">
+                <div style="height:200px;background:linear-gradient(135deg,#4facfe,#00f2fe);"></div>
+                <div style="padding:1.5rem;"><h3>Dashboard</h3><p style="opacity:0.7;">Analytics with real-time data</p></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ORDER -->
+<div id="page-order" class="page">
+    <div class="container">
+        <h1 style="font-size:2.5rem;font-weight:700;text-align:center;margin-bottom:2rem;">Place Your Order</h1>
+        <form id="orderForm" class="order-form" onsubmit="submitOrder(event)">
+            <div class="form-row">
+                <div class="form-group"><label>Full Name *</label><input type="text" id="ordName" class="form-control" required /></div>
+                <div class="form-group"><label>Email *</label><input type="email" id="ordEmail" class="form-control" required /></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Phone</label><input type="tel" id="ordPhone" class="form-control" /></div>
+                <div class="form-group"><label>Project Type *</label>
+                    <select id="ordType" class="form-control" required>
+                        <option value="website">Website</option>
+                        <option value="uiux">UI/UX Design</option>
+                        <option value="mobile">Mobile App</option>
+                        <option value="ecommerce">E-commerce</option>
+                        <option value="dashboard">Dashboard</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group"><label>Project Description *</label>
+                <textarea id="ordDesc" class="form-control" rows="4" required placeholder="Describe your project in detail..."></textarea>
+            </div>
+            <div class="form-group"><label>Budget: LKR <span id="budgetDisplay">500</span></label>
+                <input type="range" id="ordBudget" min="100" max="10000" step="100" value="500" class="form-control" oninput="document.getElementById('budgetDisplay').textContent=this.value" />
+            </div>
+            <div class="form-group"><label>Features</label>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+                    <label><input type="checkbox" value="Responsive Design" /> Responsive Design</label>
+                    <label><input type="checkbox" value="SEO" /> SEO</label>
+                    <label><input type="checkbox" value="Admin Panel" /> Admin Panel</label>
+                    <label><input type="checkbox" value="Chat Support" /> Chat Support</label>
+                    <label><input type="checkbox" value="Payment Gateway" /> Payment Gateway</label>
+                </div>
+            </div>
+            <div class="form-group"><label>Expected Deadline</label><input type="date" id="ordDeadline" class="form-control" /></div>
+            <button type="submit" class="nav-btn btn-primary" style="width:100%;padding:1rem;font-size:1.1rem;">Submit Order</button>
+        </form>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="page-dashboard" class="page">
+    <div class="container">
+        <h1 style="font-size:2.5rem;font-weight:700;margin-bottom:0.5rem;">📊 My Orders</h1>
+        <p style="opacity:0.7;margin-bottom:2rem;">Track all your project orders here</p>
+        <div id="ordersList"></div>
+    </div>
+</div>
+
+<!-- ADMIN -->
+<div id="page-admin" class="page">
+    <div class="container">
+        <h1 style="font-size:2.5rem;font-weight:700;margin-bottom:0.5rem;">⚙️ Admin Panel</h1>
+        <p style="opacity:0.7;margin-bottom:2rem;">Manage all orders and update status</p>
+        <div style="overflow-x:auto;">
+            <table class="admin-table" id="adminTable">
+                <thead><tr><th>Client</th><th>Project</th><th>Budget</th><th>Status</th><th>Price</th><th>Action</th></tr></thead>
+                <tbody id="adminOrdersBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- LOGIN -->
+<div id="page-login" class="page">
+    <div class="container" style="max-width:450px;margin:0 auto;">
+        <div class="order-form">
+            <h2 style="font-size:2rem;font-weight:700;text-align:center;margin-bottom:1.5rem;">Login</h2>
+            <form onsubmit="loginUser(event)">
+                <div class="form-group"><label>Email</label><input type="email" id="loginEmail" class="form-control" required /></div>
+                <div class="form-group"><label>Password</label><input type="password" id="loginPassword" class="form-control" required /></div>
+                <button type="submit" class="nav-btn btn-primary" style="width:100%;padding:0.75rem;">Login</button>
+                <p style="text-align:center;margin-top:1rem;">Don't have an account? <a onclick="navigateTo('register')" style="color:#667eea;cursor:pointer;">Register</a></p>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- REGISTER -->
+<div id="page-register" class="page">
+    <div class="container" style="max-width:450px;margin:0 auto;">
+        <div class="order-form">
+            <h2 style="font-size:2rem;font-weight:700;text-align:center;margin-bottom:1.5rem;">Register</h2>
+            <form onsubmit="registerUser(event)">
+                <div class="form-group"><label>Full Name</label><input type="text" id="regName" class="form-control" required /></div>
+                <div class="form-group"><label>Email</label><input type="email" id="regEmail" class="form-control" required /></div>
+                <div class="form-group"><label>Password</label><input type="password" id="regPassword" class="form-control" required minlength="6" /></div>
+                <div class="form-group"><label>Phone</label><input type="tel" id="regPhone" class="form-control" /></div>
+                <button type="submit" class="nav-btn btn-primary" style="width:100%;padding:0.75rem;">Register</button>
+                <p style="text-align:center;margin-top:1rem;">Already have an account? <a onclick="navigateTo('login')" style="color:#667eea;cursor:pointer;">Login</a></p>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ====== TOAST NOTIFICATION ====== -->
+<div id="toast" style="position:fixed;bottom:2rem;right:2rem;z-index:9999;background:#1e293b;color:#fff;padding:1rem 2rem;border-radius:1rem;box-shadow:0 8px 30px rgba(0,0,0,0.2);transform:translateY(100px);opacity:0;transition:0.4s;max-width:400px;"></div>
+
+<script>
+// ============================================================
+// ==================== FRONTEND LOGIC ==========================
+// ============================================================
+
+const API_URL = '';
+let currentUser = null;
+let token = localStorage.getItem('token');
+
+// ====== TOAST ======
+function showToast(msg, isError = false) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.background = isError ? '#ef4444' : '#1e293b';
+    t.style.transform = 'translateY(0)';
+    t.style.opacity = '1';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => { t.style.transform = 'translateY(100px)'; t.style.opacity = '0'; }, 3000);
+}
+
+// ====== NAVIGATION ======
+function navigateTo(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (page === 'dashboard') loadOrders();
+    if (page === 'admin') loadAdminOrders();
+}
+
+function toggleMobileMenu() {
+    document.getElementById('mobile-menu').classList.toggle('show');
+}
+
+// ====== AUTH ======
+function updateUI() {
+    const isLoggedIn = !!token && currentUser;
+    document.getElementById('authLinks').style.display = isLoggedIn ? 'none' : 'inline';
+    document.getElementById('userLinks').style.display = isLoggedIn ? 'inline' : 'none';
+    document.getElementById('mAuthLinks').style.display = isLoggedIn ? 'none' : 'block';
+    document.getElementById('mUserLinks').style.display = isLoggedIn ? 'block' : 'none';
+    
+    const dashLinks = document.querySelectorAll('#dashboardLink, #mDashboardLink');
+    dashLinks.forEach(el => el.style.display = isLoggedIn ? 'inline' : 'none');
+    
+    const adminLinks = document.querySelectorAll('#adminLink, #mAdminLink');
+    adminLinks.forEach(el => el.style.display = (isLoggedIn && currentUser?.role === 'admin') ? 'inline' : 'none');
+    
+    if (isLoggedIn) {
+        document.getElementById('userName').textContent = currentUser.name;
+        document.getElementById('mUserName').textContent = currentUser.name;
+    }
+}
+
+async function loginUser(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    try {
+        const res = await fetch(API_URL + '/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Login failed');
+        token = data.token;
+        currentUser = data.user;
+        localStorage.setItem('token', token);
+        updateUI();
+        showToast('✅ Login successful!');
+        navigateTo('home');
+    } catch (err) {
+        showToast('❌ ' + err.message, true);
+    }
+}
+
+async function registerUser(e) {
+    e.preventDefault();
+    const name = document.getElementById('regName').value;
+    const email = document.getElementById('regEmail').value;
+    const password = document.getElementById('regPassword').value;
+    const phone = document.getElementById('regPhone').value;
+    try {
+        const res = await fetch(API_URL + '/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, password, phone })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Registration failed');
+        token = data.token;
+        currentUser = data.user;
+        localStorage.setItem('token', token);
+        updateUI();
+        showToast('✅ Registration successful!');
+        navigateTo('home');
+    } catch (err) {
+        showToast('❌ ' + err.message, true);
+    }
+}
+
+function logout() {
+    token = null;
+    currentUser = null;
+    localStorage.removeItem('token');
+    updateUI();
+    showToast('👋 Logged out');
+    navigateTo('home');
+}
+
+// ====== ORDER ======
+async function submitOrder(e) {
+    e.preventDefault();
+    if (!token) { showToast('❌ Please login first', true); navigateTo('login'); return; }
+    const clientName = document.getElementById('ordName').value;
+    const email = document.getElementById('ordEmail').value;
+    const phone = document.getElementById('ordPhone').value;
+    const projectType = document.getElementById('ordType').value;
+    const description = document.getElementById('ordDesc').value;
+    const budget = parseInt(document.getElementById('ordBudget').value);
+    const deadline = document.getElementById('ordDeadline').value;
+    const features = Array.from(document.querySelectorAll('#orderForm input[type="checkbox"]:checked')).map(cb => cb.value);
+    
+    try {
+        const res = await fetch(API_URL + '/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ clientName, email, phone, projectType, description, budget, features, deadline })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Order failed');
+        showToast('✅ Order placed successfully!');
+        navigateTo('dashboard');
+    } catch (err) {
+        showToast('❌ ' + err.message, true);
+    }
+}
+
+// ====== DASHBOARD ======
+async function loadOrders() {
+    if (!token) return;
+    try {
+        const res = await fetch(API_URL + '/api/orders/my-orders', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const orders = await res.json();
+        if (!res.ok) throw new Error(orders.message);
+        const container = document.getElementById('ordersList');
+        if (orders.length === 0) {
+            container.innerHTML = '<p style="text-align:center;opacity:0.6;padding:2rem;">No orders yet. <a onclick="navigateTo(\'order\')" style="color:#667eea;cursor:pointer;">Place your first order!</a></p>';
+            return;
+        }
+        container.innerHTML = orders.map(o => `
+            <div class="order-card">
+                <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">
+                    <div><strong>${o.projectType.toUpperCase()}</strong> - ${o.description?.slice(0,60) || ''}${o.description?.length>60?'...':''}</div>
+                    <span class="status-badge status-${o.status}">${o.status}</span>
+                </div>
+                <div style="display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:0.5rem;font-size:0.9rem;opacity:0.7;">
+                    <span>💰 LKR ${o.budget || 'N/A'}</span>
+                    <span>📅 ${new Date(o.createdAt).toLocaleDateString()}</span>
+                    ${o.price ? `<span>💵 Price: LKR ${o.price}</span>` : ''}
+                    ${o.features?.length ? '<span>✨ ' + o.features.join(', ') + '</span>' : ''}
+                </div>
+            </div>
+        `).join('');
+    } catch (err) {
+        showToast('❌ ' + err.message, true);
+    }
+}
+
+// ====== ADMIN ======
+async function loadAdminOrders() {
+    if (!token || currentUser?.role !== 'admin') return;
+    try {
+        const res = await fetch(API_URL + '/api/orders/all', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const orders = await res.json();
+        if (!res.ok) throw new Error(orders.message);
+        const tbody = document.getElementById('adminOrdersBody');
+        if (orders.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;opacity:0.6;">No orders</td></tr>';
+            return;
+        }
+        tbody.innerHTML = orders.map(o => `
+            <tr>
+                <td>${o.clientName || o.clientDetails?.name || 'N/A'}</td>
+                <td>${o.projectType}</td>
+                <td>LKR ${o.budget || 'N/A'}</td>
+                <td>
+                    <select onchange="updateOrderStatus('${o._id}', this.value)" class="form-control" style="width:auto;padding:0.25rem 0.5rem;">
+                        ${['pending','review','in-progress','completed','cancelled'].map(s =>
+                            `<option value="${s}" ${o.status===s?'selected':''}>${s}</option>`
+                        ).join('')}
+                    </select>
+                </td>
+                <td>
+                    <input type="number" id="price_${o._id}" placeholder="Price" class="form-control" style="width:90px;padding:0.25rem 0.5rem;" value="${o.price||''}" />
+                </td>
+                <td>
+                    <button class="nav-btn btn-primary" style="padding:0.25rem 0.75rem;font-size:0.8rem;" onclick="updateOrderPrice('${o._id}')">Set</button>
+                    <button class="nav-btn btn-danger" style="padding:0.25rem 0.75rem;font-size:0.8rem;margin-left:0.3rem;" onclick="deleteOrder('${o._id}')">Delete</button>
+                </td>
+            </tr>
+        `).join('');
+    } catch (err) {
+        showToast('❌ ' + err.message, true);
+    }
+}
+
+async function updateOrderStatus(id, status) {
+    try {
+        const res = await fetch(API_URL + '/api/orders/' + id, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ status })
+        });
+        if (!res.ok) throw new Error('Update failed');
+        showToast('✅ Status updated');
+        loadAdminOrders();
+    } catch (err) {
+        showToast('❌ ' + err.message, true);
+    }
+}
+
+async function updateOrderPrice(id) {
+    const price = document.getElementById('price_' + id).value;
+    if (!price) { showToast('❌ Enter a price first', true); return; }
+    try {
+        const res = await fetch(API_URL + '/api/orders/' + id, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ price: parseInt(price) })
+        });
+        if (!res.ok) throw new Error('Update failed');
+        showToast('✅ Price updated');
+        loadAdminOrders();
+    } catch (err) {
+        showToast('❌ ' + err.message, true);
+    }
+}
+
+async function deleteOrder(id) {
+    if (!confirm('Are you sure you want to delete this order?')) return;
+    try {
+        const res = await fetch(API_URL + '/api/orders/' + id, {
+            method: 'DELETE',
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (!res.ok) throw new Error('Delete failed');
+        showToast('✅ Order deleted');
+        loadAdminOrders();
+    } catch (err) {
+        showToast('❌ ' + err.message, true);
+    }
+}
+
+// ====== CHECK AUTH ON LOAD ======
+async function checkAuth() {
+    if (!token) { updateUI(); return; }
+    try {
+        const res = await fetch(API_URL + '/api/auth/me', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (!res.ok) throw new Error();
+        currentUser = await res.json();
+        updateUI();
+    } catch (err) {
+        token = null;
+        localStorage.removeItem('token');
+        currentUser = null;
+        updateUI();
+    }
+}
+
+// ====== HIDE LOADING SCREEN ======
+setTimeout(() => {
+    document.getElementById('loading-screen').classList.add('hide');
+}, 1500);
+
+// ====== INIT ======
+checkAuth();
+
+// Dark mode toggle (double click logo)
+document.querySelector('.logo').addEventListener('dblclick', () => {
+    document.body.classList.toggle('dark');
+});
+
+// Auto-load dashboard if logged in
+setInterval(() => {
+    if (document.getElementById('page-dashboard').classList.contains('active')) {
+        loadOrders();
+    }
+    if (document.getElementById('page-admin').classList.contains('active') && currentUser?.role === 'admin') {
+        loadAdminOrders();
+    }
+}, 5000);
+</script>
+
+</body>
+</html>
